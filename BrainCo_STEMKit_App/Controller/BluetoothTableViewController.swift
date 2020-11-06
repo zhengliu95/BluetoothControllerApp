@@ -23,9 +23,9 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
     // The peripheral the user has selected
     private var myPeripheral: CBPeripheral!
     // The peripherals that have been discovered (sorted by asc RSSI)
-    private var peripheralArray: [(peripheral: CBPeripheral, RSSI: Float)] = []
+    private var peripheralArray: [PeripheralItem] = []
 
-    private var selectedCell: UITableViewCell?
+    private var selectedRow: IndexPath?
     private var connectLabel: UILabel?
     
 // MARK: - Functions
@@ -36,13 +36,15 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
         // set bluetoothhandler's delegate to self
         bluetoothHandler.delegate = self
         
+        retry.isEnabled = false
+        
         //check is Bluetooth is powered on
         if  bluetoothHandler.centralManager.state != .poweredOn {
             title = "Bluetooth not turned on"
             return
         }
         title = "Scanning"
-        retry.isEnabled = false
+        
         // start scanning and schedule the time out
         bluetoothHandler.startScan()
         Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(BluetoothTableViewController.scanTimeOut), userInfo: nil, repeats: false)
@@ -69,7 +71,7 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
             myPeripheral = nil
         }
         print("time out")
-        let label = self.selectedCell!.viewWithTag(2) as! UILabel
+        let label = tableView.cellForRow(at: self.selectedRow!)!.viewWithTag(2) as! UILabel
         label.text = "Connection Failed"
         
         // stop scanning and save resources
@@ -80,7 +82,7 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
 // MARK: - Navigation
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
         //            if segue.identifier == "goToMenuSegue"{
@@ -90,7 +92,7 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
         //                }
         //
         //            }
-    }
+//    }
     
     
     
@@ -109,7 +111,16 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
         let cell = tableView.dequeueReusableCell(withIdentifier: "device", for: indexPath)
         let label = cell.viewWithTag(1) as! UILabel
 //        cell.textLabel!.text = peripheralArray[(indexPath as NSIndexPath).row].peripheral.name
-        label.text = peripheralArray[(indexPath as NSIndexPath).row].peripheral.name
+        label.text = peripheralArray[(indexPath as NSIndexPath).row].peripheral!.name
+        
+        if  peripheralArray[indexPath.row].connectStatus == false{
+            let label = cell.viewWithTag(2) as! UILabel
+            label.text = "connect"
+        }else{
+            let label = cell.viewWithTag(2) as! UILabel
+            label.text = "connecting"
+        }
+        
         return cell
     }
         
@@ -117,22 +128,21 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
         self.tableView.deselectRow(at: indexPath, animated: true)
         
         // if have previous selected cell
-        if let previousCell = selectedCell{
+        if let previousRow = selectedRow{
             // if previous cell is not the current selected cell
-            if previousCell != self.tableView.cellForRow(at: indexPath){
-                let label = previousCell.viewWithTag(2) as! UILabel
-                label.text = "connect"
+            if previousRow != indexPath{
+                peripheralArray[previousRow.row].connectStatus = false
                 bluetoothHandler.disconnect()
+                peripheralArray[indexPath.row].connectStatus = true
             }
+                // else do nothing
             else {return}
         }
         
-        selectedCell = self.tableView.cellForRow(at: indexPath)
-        let label = selectedCell?.viewWithTag(2) as! UILabel
-        label.text = "Connecting"
+        selectedRow = indexPath
         myPeripheral = peripheralArray[indexPath.row].peripheral
         bluetoothHandler.connectToPeripheral(myPeripheral)
-        
+        tableView.reloadData()
         Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(BluetoothTableViewController.connectTimeOut), userInfo: nil, repeats: false)
     }
     
@@ -142,13 +152,17 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
     func bluetoothDidDiscoverPeripheral(_ peripheral: CBPeripheral, RSSI: NSNumber?) {
         // check whether it is a duplicate
         for exisiting in peripheralArray {
-            if exisiting.peripheral.identifier == peripheral.identifier { return }
+            if exisiting.peripheral!.identifier == peripheral.identifier { return }
         }
         if let _ = peripheral.name {
             // add to the array, next sort & reload
             let theRSSI = RSSI?.floatValue ?? 0.0
-            peripheralArray.append((peripheral: peripheral, RSSI: theRSSI))
-            peripheralArray.sort { $0.RSSI < $1.RSSI }
+            let newItem = PeripheralItem()
+            newItem.peripheral = peripheral
+            newItem.rssi = theRSSI
+            newItem.connectStatus = false
+            peripheralArray.append(newItem)
+            peripheralArray.sort { $0.rssi < $1.rssi }
         }
         self.tableView.reloadData()
         
@@ -156,26 +170,26 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
     
     func bluetoothDidFailToConnect(_ peripheral: CBPeripheral, error: NSError?) {
         self.retry.isEnabled = true
-        let label = self.selectedCell!.viewWithTag(2) as! UILabel
+        let label = tableView.cellForRow(at: self.selectedRow!)!.viewWithTag(2) as! UILabel
         label.text = "Connection Failed"
     }
     
     func bluetoothDidDisconnect(_ peripheral: CBPeripheral, error: NSError?) {
         self.retry.isEnabled = true
-        let label = self.selectedCell!.viewWithTag(2) as! UILabel
+        let label = tableView.cellForRow(at: self.selectedRow!)!.viewWithTag(2) as! UILabel
         label.text = "Connection Failed"
     }
     
     func bluetoothIsReady(_ peripheral: CBPeripheral) {
         
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "bluetoothStateChanged"), object: self)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "bluetoothReady"), object: self)
         dismiss(animated: true, completion: nil)
     }
     
     func bluetoothDidChangeState() {
         
         if bluetoothHandler.centralManager.state != .poweredOn {
-            NotificationCenter.default.post(name: Notification.Name(rawValue: "bluetoothStateChanged"), object: self)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "bluetoothOff"), object: self)
             dismiss(animated: true, completion: nil)
         }
     }
@@ -194,15 +208,16 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
 // MARK: - IBActions
     
     @IBAction func rescan(_ sender: UIBarButtonItem) {
-        peripheralArray = []
-        if let theCell = self.selectedCell{
-            let label = theCell.viewWithTag(2) as! UILabel
-            label.text = "connect"
+        
+        if let theRow = selectedRow{
+            peripheralArray[(theRow as NSIndexPath).row].connectStatus = false
         }
-        self.tableView.reloadData()
+        peripheralArray = []
+        
         self.title = "Scanning"
-        self.selectedCell = nil
+        self.selectedRow = nil
         self.retry.isEnabled = false
+        self.tableView.reloadData()
         bluetoothHandler.startScan()
         
         Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(BluetoothTableViewController.scanTimeOut), userInfo: nil, repeats: false)
@@ -216,92 +231,3 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
     
     
 }
-
-//// MARK: - CBCentralManagerDelegate
-//
-//extension BluetoothTableViewController: CBCentralManagerDelegate{
-//
-//    func centralManagerDidUpdateState(_ central: CBCentralManager) {
-//        print("Central state update")
-//        if central.state != .poweredOn {
-//            print("Central is not powered on")
-//        } else {
-//            central.scanForPeripherals(withServices: nil, options: nil)
-//        }
-//    }
-//
-//
-//    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-//
-//        print("Connected to your Particle Board")
-//        peripheral.discoverServices(nil)
-//
-//    }
-//
-//    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-//
-//
-//        //            if let pname = peripheral.name {
-//
-//        //                print(pname)
-//        // add scanned peripheral to the array
-//
-//        //not sure if it works
-//        //                if pname == "HM_10" {
-//        //                    self.centralManager.stopScan()
-//        //                    self.myPeripheral = peripheral
-//        //                    self.myPeripheral.delegate = self
-//        //                    self.centralManager.connect(peripheral, options: nil)
-//        //                }
-//        if peripheral.name != nil{
-//            //check if array contains the scanned peripheral
-//            for exisiting in peripheralArray {
-//                if exisiting.peripheral.identifier == peripheral.identifier { return }
-//            }
-//
-//            peripheralArray.append((peripheral: peripheral, RSSI: RSSI.floatValue ))
-//            peripheralArray.sort { $0.RSSI < $1.RSSI }
-//            self.tableView.reloadData()
-//        }
-//        // enable retry button
-//        self.retry.isEnabled = true
-//
-//    }
-//
-//    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-//        if peripheral == myPeripheral {
-//            print("Disconnected")
-//            myPeripheral = nil
-//        }
-//    }
-//
-//}
-//
-//// MARK: - CBPeripheralDelegate
-//extension BluetoothTableViewController: CBPeripheralDelegate{
-//    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-//        if let services = peripheral.services {
-//            for service in services {
-//                if service.uuid == ParticlePeripheral.particleServiceUUID {
-//                    print("Bluetooth module service found")
-//
-//                    peripheral.discoverCharacteristics(nil, for: service)
-//                    return
-//                }
-//            }
-//        }
-//    }
-//
-//    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-//        if let characteristics = service.characteristics {
-//            for characteristic in characteristics {
-//                if characteristic.uuid == ParticlePeripheral.writeReadCharacteristicUUID {
-//                    print("Bluetooth module characteristic found")
-//                    myCharacteristics = characteristic
-//                    // subscribe regular notification
-//                    peripheral.setNotifyValue(true, for: characteristic)
-//                }
-//            }
-//        }
-//    }
-//}

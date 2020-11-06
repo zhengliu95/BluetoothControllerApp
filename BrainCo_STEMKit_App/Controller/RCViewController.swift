@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import CoreBluetooth
 
-class RCViewController: UIViewController {
-
+class RCViewController: UIViewController, BluetoothDelegate {
+    
     @IBOutlet weak var Button1: UIButton!
     @IBOutlet weak var Button2: UIButton!
     @IBOutlet weak var Button3: UIButton!
@@ -25,7 +26,8 @@ class RCViewController: UIViewController {
     
     
     @IBAction func Send1(_ sender: UIButton) {
-        print(Button1.titleLabel!.text!)
+        let bytes : [UInt8] = [UInt8(bitPattern: Int8(1))]
+        bluetoothHandler.sendBytesToDevice(bytes)
     }
     @IBAction func Send2(_ sender: UIButton) {
         print(Button2.titleLabel!.text!)
@@ -64,8 +66,16 @@ class RCViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        bluetoothHandler.delegate = self
         // Do any additional setup after loading the view.
+    }
+    // MARK: - Bluetooth delegate
+    func bluetoothDidChangeState() {
+        return
+    }
+    
+    func bluetoothDidDisconnect(_ peripheral: CBPeripheral, error: NSError?) {
+        return
     }
     
 

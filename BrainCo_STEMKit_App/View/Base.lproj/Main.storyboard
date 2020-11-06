@@ -154,7 +154,7 @@
                                         <rect key="frame" x="0.0" y="132" width="129" height="30"/>
                                         <state key="normal" title="Connect Bluetooth"/>
                                         <connections>
-                                            <segue destination="p0J-uO-5Go" kind="presentation" id="hxn-6V-f5h"/>
+                                            <segue destination="p0J-uO-5Go" kind="presentation" identifier="BluetoothConnection" id="hxn-6V-f5h"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qi7-da-0Xc">
@@ -163,7 +163,7 @@
                                     </button>
                                 </subviews>
                             </stackView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yNj-po-aOn">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hi! Guest." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yNj-po-aOn">
                                 <rect key="frame" x="132" y="173" width="150" height="33"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="33" id="gp6-Mw-J21"/>
@@ -429,7 +429,7 @@
                         <viewLayoutGuide key="safeArea" id="qJG-Np-MxZ"/>
                     </view>
                     <navigationItem key="navigationItem" title="Remote Controller" id="Nyg-LB-1tC">
-                        <barButtonItem key="backBarButtonItem" title="Menu" id="gMv-YO-bqb"/>
+                        <barButtonItem key="backBarButtonItem" title="Back" id="gMv-YO-bqb"/>
                     </navigationItem>
                     <connections>
                         <outlet property="Button0" destination="M1K-iN-JAZ" id="BTH-uZ-5RU"/>

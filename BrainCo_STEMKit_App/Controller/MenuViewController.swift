@@ -21,9 +21,11 @@ class MenuViewController: UIViewController, BluetoothDelegate {
         if let hasText = message{
             ShowMessage.textAlignment = .center
             ShowMessage.text = "Hello! \(hasText)"
-            bluetoothHandler = BluetoothClass(delegate: self)
+            
         }
-        
+        bluetoothHandler = BluetoothClass(delegate: self)
+        NotificationCenter.default.addObserver(self, selector: #selector(MenuViewController.showAlert), name: NSNotification.Name(rawValue: "bluetoothOff"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MenuViewController.showConnected), name: NSNotification.Name(rawValue: "bluetoothReady"), object: nil)
         // Do any additional setup after loading the view.
     }
     
@@ -37,6 +39,30 @@ class MenuViewController: UIViewController, BluetoothDelegate {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    // objective-c function 
+    @objc func showAlert(){
+        // create the alert
+        let alert = UIAlertController(title: "Warning", message: "The Bluetooth is off, please connect again", preferredStyle: UIAlertController.Style.alert)
+
+        // add an action (button)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+
+        // show the alert
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    @objc func showConnected() {
+        // create the alert
+        let alert = UIAlertController(title: "Success", message: "The Bluetooth is connected", preferredStyle: UIAlertController.Style.alert)
+
+        // add an action (button)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+       
+
+        // show the alert
+        self.present(alert, animated: true, completion: nil)
+    }
     
 // MARK: - BluetoothDelegate
     func bluetoothDidChangeState() {

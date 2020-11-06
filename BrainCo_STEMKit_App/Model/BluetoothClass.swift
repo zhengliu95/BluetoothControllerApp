@@ -140,9 +140,9 @@ final class BluetoothClass: NSObject, CBCentralManagerDelegate, CBPeripheralDele
     
     
     // Send an array of bytes to the device
-    func sendBytesToDevice(_ data: String) {
+    func sendBytesToDevice(_ bytes: [UInt8]) {
         guard isReady else { return }
-        let data = (data as NSString).data(using: String.Encoding.utf8.rawValue)!
+        let data = Data(bytes: UnsafePointer<UInt8>(bytes), count: bytes.count)
         connectedPeripheral?.writeValue(data, for: writeCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
     }
     
@@ -214,6 +214,17 @@ final class BluetoothClass: NSObject, CBCentralManagerDelegate, CBPeripheralDele
                 delegate?.bluetoothIsReady(peripheral)
             }
         }
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        // notify the delegate
+        let data = characteristic.value
+        guard data != nil else { return }
+        
+        // bytes array
+        var bytes = [UInt8](repeating: 0, count: data!.count / MemoryLayout<UInt8>.size)
+        (data! as NSData).getBytes(&bytes, length: data!.count)
+        delegate?.bluetoothDidReceiveBytes(bytes)
     }
     
     func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
