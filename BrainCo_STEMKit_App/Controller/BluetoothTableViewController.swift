@@ -44,7 +44,7 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
             return
         }
         title = "Scanning"
-        
+        tableView.allowsSelection = false
         // start scanning and schedule the time out
         bluetoothHandler.startScan()
         Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(BluetoothTableViewController.scanTimeOut), userInfo: nil, repeats: false)
@@ -57,6 +57,7 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
         bluetoothHandler.stopScan()
         retry.isEnabled = true
         title = "Done scanning"
+        tableView.allowsSelection = true
     }
     
     // Should be called 10s after we've begun connecting
@@ -71,6 +72,7 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
             myPeripheral = nil
         }
         print("time out")
+        peripheralArray[selectedRow!.row].connectStatus = false
         let label = tableView.cellForRow(at: self.selectedRow!)!.viewWithTag(2) as! UILabel
         label.text = "Connection Failed"
         
@@ -78,24 +80,7 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
         bluetoothHandler.stopScan()
     }
     
-    
-// MARK: - Navigation
-    
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-        //            if segue.identifier == "goToMenuSegue"{
-        //                if let destVC = segue.destination as? UINavigationController,
-        //                    let targetController = destVC.topViewController as? MenuViewController {
-        //                    targetController.message = userName.text!
-        //                }
-        //
-        //            }
-//    }
-    
-    
-    
+
 // MARK: - Table view data source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -133,13 +118,14 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
             if previousRow != indexPath{
                 peripheralArray[previousRow.row].connectStatus = false
                 bluetoothHandler.disconnect()
-                peripheralArray[indexPath.row].connectStatus = true
+                
             }
                 // else do nothing
             else {return}
         }
         
         selectedRow = indexPath
+        peripheralArray[indexPath.row].connectStatus = true
         myPeripheral = peripheralArray[indexPath.row].peripheral
         bluetoothHandler.connectToPeripheral(myPeripheral)
         tableView.reloadData()
@@ -170,24 +156,34 @@ class BluetoothTableViewController: UITableViewController, BluetoothDelegate{
     
     func bluetoothDidFailToConnect(_ peripheral: CBPeripheral, error: NSError?) {
         self.retry.isEnabled = true
+        peripheralArray[selectedRow!.row].connectStatus = false
         let label = tableView.cellForRow(at: self.selectedRow!)!.viewWithTag(2) as! UILabel
         label.text = "Connection Failed"
     }
     
     func bluetoothDidDisconnect(_ peripheral: CBPeripheral, error: NSError?) {
         self.retry.isEnabled = true
+        peripheralArray[selectedRow!.row].connectStatus = false
         let label = tableView.cellForRow(at: self.selectedRow!)!.viewWithTag(2) as! UILabel
         label.text = "Connection Failed"
     }
     
     func bluetoothIsReady(_ peripheral: CBPeripheral) {
-        
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "bluetoothReady"), object: self)
-        dismiss(animated: true, completion: nil)
+        // create the alert
+        let alert = UIAlertController(title: "Success", message: "The Bluetooth is connected", preferredStyle: UIAlertController.Style.alert)
+
+        // add an action (button)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default){ _ in
+            self.dismiss(animated: true, completion: nil)
+        })
+       
+
+        // show the alert
+        self.present(alert, animated: true, completion: nil)
     }
-    
+
     func bluetoothDidChangeState() {
-        
+
         if bluetoothHandler.centralManager.state != .poweredOn {
             NotificationCenter.default.post(name: Notification.Name(rawValue: "bluetoothOff"), object: self)
             dismiss(animated: true, completion: nil)

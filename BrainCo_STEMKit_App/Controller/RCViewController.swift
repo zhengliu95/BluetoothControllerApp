@@ -26,32 +26,43 @@ class RCViewController: UIViewController, BluetoothDelegate {
     
     
     @IBAction func Send1(_ sender: UIButton) {
-        let bytes : [UInt8] = [UInt8(bitPattern: Int8(1))]
+        let bytes : [UInt8] = [0x01]
+        
         bluetoothHandler.sendBytesToDevice(bytes)
     }
     @IBAction func Send2(_ sender: UIButton) {
-        print(Button2.titleLabel!.text!)
+        let bytes : [UInt8] = [0x08]
+        bluetoothHandler.sendBytesToDevice(bytes)
     }
     @IBAction func Send3(_ sender: UIButton) {
-        print(Button3.titleLabel!.text!)
+        let bytes : [UInt8] = [0x10]
+        bluetoothHandler.sendBytesToDevice(bytes)
     }
     @IBAction func Send4(_ sender: UIButton) {
-        print(Button4.titleLabel!.text!)
+        let bytes : [UInt8] = [0x20]
+        bluetoothHandler.sendBytesToDevice(bytes)
     }
     @IBAction func Send5(_ sender: UIButton) {
-        print(Button5.titleLabel!.text!)
+        let bytes : [UInt8] = [0x30]
+        bluetoothHandler.sendBytesToDevice(bytes)
     }
     @IBAction func Send6(_ sender: UIButton) {
-        print(Button6.titleLabel!.text!)
+        let bytes : [UInt8] = [0x35]
+        bluetoothHandler.sendBytesToDevice(bytes)
     }
     @IBAction func Send7(_ sender: UIButton) {
-        print(Button7.titleLabel!.text!)
+        let bytes : [UInt8] = [0x40]
+        bluetoothHandler.sendBytesToDevice(bytes)
     }
     @IBAction func Send8(_ sender: UIButton) {
+        let bytes : [UInt8] = [0x50]
         print(Button8.titleLabel!.text!)
+        bluetoothHandler.sendBytesToDevice(bytes)
     }
     @IBAction func Send9(_ sender: UIButton) {
+        let bytes : [UInt8] = [0x45]
         print(Button9.titleLabel!.text!)
+        bluetoothHandler.sendBytesToDevice(bytes)
     }
     @IBAction func SendFingWave(_ sender: UIButton) {
         print(ButtonFingWave.titleLabel!.text!)
@@ -71,11 +82,18 @@ class RCViewController: UIViewController, BluetoothDelegate {
     }
     // MARK: - Bluetooth delegate
     func bluetoothDidChangeState() {
-        return
+        if bluetoothHandler.centralManager.state != .poweredOn {
+            print("state changed")
+        }
     }
     
     func bluetoothDidDisconnect(_ peripheral: CBPeripheral, error: NSError?) {
-        return
+        print(error ?? "None")
+        print("Disconnect")
+    }
+    
+    func bluetoothDidReceiveBytes(_ bytes: [UInt8]) {
+        print(bytes)
     }
     
 

@@ -201,7 +201,7 @@ final class BluetoothClass: NSObject, CBCentralManagerDelegate, CBPeripheralDele
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        // check whether the characteristic we're looking for (0xFFE1) is present - just to be sure
+        // check whether the characteristic we're looking for (0xFFE1) is present - just to make sure
         for characteristic in service.characteristics! {
             if characteristic.uuid == ParticlePeripheral.writeReadCharacteristicUUID {
                 // subscribe to this value (so we'll get notified when there is serial data for us..)
