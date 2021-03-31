@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB0024B5260AA49200B8CEBF /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0024B4260AA49200B8CEBF /* SignupViewController.swift */; };
 		BB38DCE3254F87E900550E64 /* PeripheralItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB38DCE2254F87E900550E64 /* PeripheralItem.swift */; };
 		BB7716C524FEC65A00B5D1F3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7716C424FEC65A00B5D1F3 /* AppDelegate.swift */; };
 		BB7716C724FEC65A00B5D1F3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7716C624FEC65A00B5D1F3 /* SceneDelegate.swift */; };
@@ -15,6 +16,7 @@
 		BB7716CE24FEC65B00B5D1F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB7716CD24FEC65B00B5D1F3 /* Assets.xcassets */; };
 		BB7716D124FEC65B00B5D1F3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB7716CF24FEC65B00B5D1F3 /* LaunchScreen.storyboard */; };
 		BB7716DC24FEC65B00B5D1F3 /* BrainCo_STEMKit_AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7716DB24FEC65B00B5D1F3 /* BrainCo_STEMKit_AppTests.swift */; };
+		BB7EDE0D25D5DDA70083C934 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7EDE0C25D5DDA70083C934 /* UserModel.swift */; };
 		BB893679250BC50200E9F46A /* RCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB893678250BC50200E9F46A /* RCViewController.swift */; };
 		BB89367F250C1CBE00E9F46A /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB89367E250C1CBE00E9F46A /* MenuViewController.swift */; };
 		BB893685251565CE00E9F46A /* ParticlePeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB893684251565CE00E9F46A /* ParticlePeripheral.swift */; };
@@ -33,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BB0024B4260AA49200B8CEBF /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
 		BB38DCE2254F87E900550E64 /* PeripheralItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeripheralItem.swift; sourceTree = "<group>"; };
 		BB7716C124FEC65A00B5D1F3 /* BrainCo_STEMKit_App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BrainCo_STEMKit_App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB7716C424FEC65A00B5D1F3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -45,6 +48,7 @@
 		BB7716D724FEC65B00B5D1F3 /* BrainCo_STEMKit_AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BrainCo_STEMKit_AppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB7716DB24FEC65B00B5D1F3 /* BrainCo_STEMKit_AppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrainCo_STEMKit_AppTests.swift; sourceTree = "<group>"; };
 		BB7716DD24FEC65B00B5D1F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BB7EDE0C25D5DDA70083C934 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		BB893678250BC50200E9F46A /* RCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCViewController.swift; sourceTree = "<group>"; };
 		BB89367E250C1CBE00E9F46A /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		BB893684251565CE00E9F46A /* ParticlePeripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticlePeripheral.swift; sourceTree = "<group>"; };
@@ -117,6 +121,7 @@
 				BB893684251565CE00E9F46A /* ParticlePeripheral.swift */,
 				BB93A42A25367E48004BA04F /* BluetoothClass.swift */,
 				BB38DCE2254F87E900550E64 /* PeripheralItem.swift */,
+				BB7EDE0C25D5DDA70083C934 /* UserModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -137,6 +142,7 @@
 				BB8936862522A11D00E9F46A /* BluetoothTableViewController.swift */,
 				BB893678250BC50200E9F46A /* RCViewController.swift */,
 				BB7716C824FEC65A00B5D1F3 /* ViewController.swift */,
+				BB0024B4260AA49200B8CEBF /* SignupViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -244,12 +250,14 @@
 			files = (
 				BB7716C924FEC65A00B5D1F3 /* ViewController.swift in Sources */,
 				BB8936872522A11D00E9F46A /* BluetoothTableViewController.swift in Sources */,
+				BB0024B5260AA49200B8CEBF /* SignupViewController.swift in Sources */,
 				BB89367F250C1CBE00E9F46A /* MenuViewController.swift in Sources */,
 				BB93A42B25367E48004BA04F /* BluetoothClass.swift in Sources */,
 				BB893685251565CE00E9F46A /* ParticlePeripheral.swift in Sources */,
 				BB893679250BC50200E9F46A /* RCViewController.swift in Sources */,
 				BB7716C524FEC65A00B5D1F3 /* AppDelegate.swift in Sources */,
 				BB38DCE3254F87E900550E64 /* PeripheralItem.swift in Sources */,
+				BB7EDE0D25D5DDA70083C934 /* UserModel.swift in Sources */,
 				BB7716C724FEC65A00B5D1F3 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
